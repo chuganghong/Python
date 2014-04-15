@@ -1,0 +1,7 @@
+*.txt
+*.pyc
+*.db
+*.log
+*.pid
+twistd.*
+*.json
