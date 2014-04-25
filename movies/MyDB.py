@@ -12,7 +12,7 @@ class MyDB:
 			print 'Mysql Error %d: %s' % (e.args[0], e.args[1])
 			
 	# save log
-	def saveError(msg,filename):
+	def saveError(self,msg,filename):
 		f = file(filename,'a+')
 		f.write(msg)
 		f.close()
@@ -45,11 +45,13 @@ class MyDB:
 	# save tmp film content
 	def saveTmpFilmContent(self, tag_id, tmp_title, tmp_info,  tmp_related_info):
 		try:
-			value = [tag_id, MySQLdb.escape_string(tmp_title), MySQLdb.escape_string(tmp_info), MySQLdb.escape_string(tmp_related_info)]
+			# value = [tag_id, MySQLdb.escape_string(tmp_title), MySQLdb.escape_string(tmp_info), MySQLdb.escape_string(tmp_related_info)]
+			value = [tag_id, tmp_title, tmp_info, tmp_related_info]
 			sql = 'INSERT INTO tmp_film_content (tag_id, tmp_title, tmp_info, tmp_related_info) VALUES (%s, %s, %s, %s)'
 			self.cur.execute(sql, value)
 			self.conn.commit()
-			print 'save success\n'
+			# print 'save success\n'
+			# print tmp_title + ' save success'
 		except MySQLdb.Error,e:
 			# print 'MySQ Error %d: %s' %s (e.args[0], e.args[1])
 			msg = msg + '\n'
@@ -77,9 +79,10 @@ class MyDB:
 		res = self.cur.fetchmany(n)
 		return res
 		
-	# select tmp_film from tmp_films
+	# select tmp_film from tmp_films whoes film_id > 120000
 	def selectTmpFilm(self,n):
-		sql = 'SELECT * FROM tmp_films WHERE film_if = 0'
+		# sql = 'SELECT * FROM tmp_films WHERE film_if = 0 AND error_if = 0 AND film_id > 120000'
+		sql = 'SELECT * FROM tmp_films WHERE film_if = 0 AND error_if = 0'
 		self.cur.execute(sql)
 		res = self.cur.fetchmany(n)
 		return res
@@ -97,6 +100,17 @@ class MyDB:
 		sql = 'UPDATE tmp_films SET film_if=%s WHERE film_id=%s'
 		self.cur.execute(sql,value)
 		self.conn.commit()
+		
+	# update tmp_films set error_if = 1
+	def setTempFilmError(self,film_id,error_if):
+		value = [error_if,film_id]
+		# print value
+		sql = 'UPDATE tmp_films SET error_if=%s WHERE film_id=%s'
+		# print sql
+		# return False
+		self.cur.execute(sql,value)
+		self.conn.commit()
+		
 		
 	
 		
